@@ -1,0 +1,2 @@
+# kick-llm
+Learning LLM
