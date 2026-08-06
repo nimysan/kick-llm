@@ -8,7 +8,7 @@
 | 步骤 | 特征提取方式 | 分类器 | 状态 |
 |---|---|---|---|
 | 01 | 人工设计特征 | 逻辑回归 `Wx + b` | 已实现 |
-| 02 | Bag of Words | 逻辑回归 `Wx + b` | 待实现 |
+| 02 | Bag of Words | 逻辑回归 `Wx + b` | 已实现 |
 | 03 | TF-IDF / N-gram | 逻辑回归 `Wx + b` | 待实现 |
 | 04 | Word2Vec | 逻辑回归 `Wx + b` | 待实现 |
 | 05 | RNN / LSTM | 线性分类层 | 待实现 |
@@ -43,3 +43,32 @@ uv run python 01_manual_features.py "这个产品很好，我很满意"
 
 这里实现的是二分类逻辑回归，而不是预测连续值的线性回归。两者都有
 `Wx + b`，但逻辑回归还会通过 sigmoid 将分数转换成分类概率。
+
+## 第 2 步：Bag of Words
+
+运行：
+
+```bash
+uv run python 02_bag_of_words.py
+```
+
+测试自己的句子：
+
+```bash
+uv run python 02_bag_of_words.py "这个产品不好"
+```
+
+这个实验继续使用第 1 步的训练数据和逻辑回归，只把人工定义的 6 个特征
+替换成自动生成的词频向量。可以重点比较“好/不好”和“差/不差”的输出。
+不带自定义句子运行时，脚本还会使用 `evaluation_data.py` 中完全没有参与训练
+的 32 条留出数据测试泛化能力，并按表达类型展示准确率和误判。
+
+## 准确率对比图
+
+使用相同训练集、测试集和逻辑回归，只比较两种特征提取器：
+
+```bash
+uv run python compare_accuracy.py
+```
+
+运行后会生成 `accuracy_comparison.png`。

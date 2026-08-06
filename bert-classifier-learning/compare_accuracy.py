@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""在同一训练集和留出测试集上比较方法 1 与方法 2。"""
+
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from bag_of_words_features import BagOfWordsVectorizer
+from classifier import accuracy, train_logistic_regression
+from evaluation_data import TEST_DATA
+from manual_features import extract_features
+from training_data import TRAIN_DATA
+
+
+OUTPUT_PATH = Path(__file__).with_name("accuracy_comparison.png")
+
+
+def train_and_evaluate(features_train: np.ndarray, features_test: np.ndarray) -> tuple[float, float]:
+    train_labels = np.array([label for _, label in TRAIN_DATA], dtype=np.float64)
+    test_labels = np.array([label for _, label, _ in TEST_DATA], dtype=np.float64)
+    weights, bias = train_logistic_regression(features_train, train_labels)
+    return (
+        accuracy(features_train, train_labels, weights, bias),
+        accuracy(features_test, test_labels, weights, bias),
+    )
+
+
+def main() -> None:
+    train_texts = [text for text, _ in TRAIN_DATA]
+    test_texts = [text for text, _, _ in TEST_DATA]
+
+    manual_train = np.stack([extract_features(text) for text in train_texts])
+    manual_test = np.stack([extract_features(text) for text in test_texts])
+    manual_scores = train_and_evaluate(manual_train, manual_test)
+
+    vectorizer = BagOfWordsVectorizer()
+    bow_train = vectorizer.fit_transform(train_texts)
+    bow_test = vectorizer.transform(test_texts)
+    bow_scores = train_and_evaluate(bow_train, bow_test)
+
+    method_names = ["Method 1\nManual Features", "Method 2\nBag of Words"]
+    train_scores = np.array([manual_scores[0], bow_scores[0]])
+    test_scores = np.array([manual_scores[1], bow_scores[1]])
+    positions = np.arange(len(method_names))
+    width = 0.34
+
+    fig, ax = plt.subplots(figsize=(9, 5.5))
+    train_bars = ax.bar(
+        positions - width / 2,
+        train_scores,
+        width,
+        label="Training set (26)",
+        color="#2A6FBB",
+    )
+    test_bars = ax.bar(
+        positions + width / 2,
+        test_scores,
+        width,
+        label="Held-out test set (32)",
+        color="#E07A3F",
+    )
+
+    ax.set_title("Text Classification Accuracy")
+    ax.set_ylabel("Accuracy")
+    ax.set_xticks(positions, method_names)
+    ax.set_ylim(0, 1.12)
+    ax.set_yticks(np.arange(0, 1.01, 0.2), [f"{value:.0%}" for value in np.arange(0, 1.01, 0.2)])
+    ax.grid(axis="y", alpha=0.25)
+    ax.legend(loc="upper left")
+    ax.spines[["top", "right"]].set_visible(False)
+
+    for bars in (train_bars, test_bars):
+        ax.bar_label(bars, labels=[f"{value:.1%}" for value in bars.datavalues], padding=4)
+
+    fig.tight_layout()
+    fig.savefig(OUTPUT_PATH, dpi=180)
+    plt.close(fig)
+
+    print("相同数据、相同逻辑回归，只替换特征提取器：")
+    print(f"方法 1 人工特征     训练准确率={manual_scores[0]:.1%}  测试准确率={manual_scores[1]:.1%}")
+    print(f"方法 2 Bag of Words 训练准确率={bow_scores[0]:.1%}  测试准确率={bow_scores[1]:.1%}")
+    print(f"图表已保存: {OUTPUT_PATH}")
+
+
+if __name__ == "__main__":
+    main()
