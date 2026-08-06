@@ -9,11 +9,12 @@
 |---|---|---|---|
 | 01 | 人工设计特征 | 逻辑回归 `Wx + b` | 已实现 |
 | 02 | Bag of Words | 逻辑回归 `Wx + b` | 已实现 |
-| 03 | TF-IDF / N-gram | 逻辑回归 `Wx + b` | 待实现 |
-| 04 | Word2Vec | 逻辑回归 `Wx + b` | 待实现 |
-| 05 | RNN / LSTM | 线性分类层 | 待实现 |
-| 06 | 冻结的 BERT | 线性分类层 | 待实现 |
-| 07 | 微调 BERT | 线性分类层 | 待实现 |
+| 03 | TF-IDF | 逻辑回归 `Wx + b` | 已实现 |
+| 04 | N-gram | 逻辑回归 `Wx + b` | 待实现 |
+| 05 | Word2Vec | 逻辑回归 `Wx + b` | 待实现 |
+| 06 | RNN / LSTM | 线性分类层 | 待实现 |
+| 07 | 冻结的 BERT | 线性分类层 | 待实现 |
+| 08 | 微调 BERT | 线性分类层 | 待实现 |
 
 ## 第 1 步：人工特征
 
@@ -71,4 +72,21 @@ uv run python 02_bag_of_words.py "这个产品不好"
 uv run python compare_accuracy.py
 ```
 
-运行后会生成 `accuracy_comparison.png`。
+运行后会生成 `accuracy_comparison_3_methods.png`。
+
+## 第 3 步：TF-IDF
+
+运行：
+
+```bash
+uv run python 03_tfidf.py
+```
+
+测试自己的句子：
+
+```bash
+uv run python 03_tfidf.py "这个产品不差，但是不怎么好"
+```
+
+TF-IDF 的维度仍等于词表大小，但向量中的值从“出现次数”变成
+`句内词频 TF × 稀有程度 IDF`，让常见词贡献更小、稀有词贡献更大。
