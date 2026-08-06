@@ -10,11 +10,12 @@ from bag_of_words_features import BagOfWordsVectorizer
 from classifier import accuracy, train_logistic_regression
 from evaluation_data import TEST_DATA
 from manual_features import extract_features
+from ngram_features import NgramTfidfVectorizer
 from tfidf_features import TfidfVectorizer
 from training_data import TRAIN_DATA
 
 
-OUTPUT_PATH = Path(__file__).with_name("accuracy_comparison_3_methods.png")
+OUTPUT_PATH = Path(__file__).with_name("accuracy_comparison_4_methods.png")
 
 
 def train_and_evaluate(features_train: np.ndarray, features_test: np.ndarray) -> tuple[float, float]:
@@ -45,17 +46,27 @@ def main() -> None:
     tfidf_test = tfidf_vectorizer.transform(test_texts)
     tfidf_scores = train_and_evaluate(tfidf_train, tfidf_test)
 
+    ngram_vectorizer = NgramTfidfVectorizer()
+    ngram_train = ngram_vectorizer.fit_transform(train_texts)
+    ngram_test = ngram_vectorizer.transform(test_texts)
+    ngram_scores = train_and_evaluate(ngram_train, ngram_test)
+
     method_names = [
         "Method 1\nManual Features",
         "Method 2\nBag of Words",
         "Method 3\nTF-IDF",
+        "Method 4\n1-2 gram TF-IDF",
     ]
-    train_scores = np.array([manual_scores[0], bow_scores[0], tfidf_scores[0]])
-    test_scores = np.array([manual_scores[1], bow_scores[1], tfidf_scores[1]])
+    train_scores = np.array(
+        [manual_scores[0], bow_scores[0], tfidf_scores[0], ngram_scores[0]]
+    )
+    test_scores = np.array(
+        [manual_scores[1], bow_scores[1], tfidf_scores[1], ngram_scores[1]]
+    )
     positions = np.arange(len(method_names))
     width = 0.34
 
-    fig, ax = plt.subplots(figsize=(11, 5.5))
+    fig, ax = plt.subplots(figsize=(13, 5.5))
     train_bars = ax.bar(
         positions - width / 2,
         train_scores,
@@ -91,6 +102,7 @@ def main() -> None:
     print(f"方法 1 人工特征     训练准确率={manual_scores[0]:.1%}  测试准确率={manual_scores[1]:.1%}")
     print(f"方法 2 Bag of Words 训练准确率={bow_scores[0]:.1%}  测试准确率={bow_scores[1]:.1%}")
     print(f"方法 3 TF-IDF      训练准确率={tfidf_scores[0]:.1%}  测试准确率={tfidf_scores[1]:.1%}")
+    print(f"方法 4 N-gram      训练准确率={ngram_scores[0]:.1%}  测试准确率={ngram_scores[1]:.1%}")
     print(f"图表已保存: {OUTPUT_PATH}")
 
 
