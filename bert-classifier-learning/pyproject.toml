@@ -1,0 +1,12 @@
+[project]
+name = "bert-classifier-learning"
+version = "0.1.0"
+description = "Learn how text classification evolves from manual features to BERT."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.0,<3",
+]
+
+[tool.uv]
+package = false
