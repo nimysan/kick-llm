@@ -11,7 +11,7 @@
 | 02 | Bag of Words | 逻辑回归 `Wx + b` | 已实现 |
 | 03 | TF-IDF | 逻辑回归 `Wx + b` | 已实现 |
 | 04 | N-gram | 逻辑回归 `Wx + b` | 已实现 |
-| 05 | Word2Vec | 逻辑回归 `Wx + b` | 待实现 |
+| 05 | Word2Vec | 逻辑回归 `Wx + b` | 已实现 |
 | 06 | RNN / LSTM | 线性分类层 | 待实现 |
 | 07 | 冻结的 BERT | 线性分类层 | 待实现 |
 | 08 | 微调 BERT | 线性分类层 | 待实现 |
@@ -72,7 +72,7 @@ uv run python 02_bag_of_words.py "这个产品不好"
 uv run python compare_accuracy.py
 ```
 
-运行后会生成 `accuracy_comparison_4_methods.png`。
+运行后会生成 `accuracy_comparison_5_methods.png`。
 
 ## 第 3 步：TF-IDF
 
@@ -107,3 +107,22 @@ uv run python 04_ngram.py "这次购物让我不满意"
 
 这个实验使用 `1-gram + 2-gram` 的 TF-IDF。它既保留单个词，也把连续两个
 词作为新特征，因此可以为“满意”和“不 + 满意”学习不同权重。
+
+## 第 5 步：Word2Vec
+
+运行：
+
+```bash
+uv run python 05_word2vec.py
+```
+
+测试自己的句子：
+
+```bash
+uv run python 05_word2vec.py "这个产品十分出色"
+```
+
+实验使用 `gensim` 在 26 条训练文本上学习 50 维 Skip-gram 词向量，再将一句
+话中已知词的向量平均并归一化为 50 维句向量。测试数据和标签不会参与
+Word2Vec 或逻辑回归训练。默认输出还会比较五个随机种子，展示极小语料下
+Word2Vec 结果的不稳定性；对比图使用固定的 `seed=42` 以保证可复现。
