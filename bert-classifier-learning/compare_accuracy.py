@@ -12,6 +12,7 @@ from evaluation_data import TEST_DATA
 from lsa_features import LsaVectorizer
 from manual_features import extract_features
 from ngram_features import NgramTfidfVectorizer
+from ppmi_features import PpmiSvdVectorizer
 from tfidf_features import TfidfVectorizer
 from training_data import TRAIN_DATA
 from word2vec_features import Word2VecVectorizer
@@ -58,6 +59,11 @@ def main() -> None:
     lsa_test = lsa_vectorizer.transform(test_texts)
     lsa_scores = train_and_evaluate(lsa_train, lsa_test)
 
+    ppmi_vectorizer = PpmiSvdVectorizer(n_components=10, window_size=2)
+    ppmi_train = ppmi_vectorizer.fit_transform(train_texts)
+    ppmi_test = ppmi_vectorizer.transform(test_texts)
+    ppmi_scores = train_and_evaluate(ppmi_train, ppmi_test)
+
     word2vec_vectorizer = Word2VecVectorizer(vector_size=50, seed=42)
     word2vec_train = word2vec_vectorizer.fit_transform(train_texts)
     word2vec_test = word2vec_vectorizer.transform(test_texts)
@@ -69,6 +75,7 @@ def main() -> None:
         "Method 3\nTF-IDF",
         "Method 4\n1-2 gram TF-IDF",
         "Method 5\nLSA (10D)",
+        "Method 6\nPPMI + SVD",
         "Method 7\nWord2Vec (seed=42)",
     ]
     train_scores = np.array(
@@ -78,6 +85,7 @@ def main() -> None:
             tfidf_scores[0],
             ngram_scores[0],
             lsa_scores[0],
+            ppmi_scores[0],
             word2vec_scores[0],
         ]
     )
@@ -88,13 +96,14 @@ def main() -> None:
             tfidf_scores[1],
             ngram_scores[1],
             lsa_scores[1],
+            ppmi_scores[1],
             word2vec_scores[1],
         ]
     )
     positions = np.arange(len(method_names))
     width = 0.34
 
-    fig, ax = plt.subplots(figsize=(17, 5.5))
+    fig, ax = plt.subplots(figsize=(19, 5.5))
     train_bars = ax.bar(
         positions - width / 2,
         train_scores,
@@ -132,6 +141,7 @@ def main() -> None:
     print(f"方法 3 TF-IDF      训练准确率={tfidf_scores[0]:.1%}  测试准确率={tfidf_scores[1]:.1%}")
     print(f"方法 4 N-gram      训练准确率={ngram_scores[0]:.1%}  测试准确率={ngram_scores[1]:.1%}")
     print(f"方法 5 LSA         训练准确率={lsa_scores[0]:.1%}  测试准确率={lsa_scores[1]:.1%}")
+    print(f"方法 6 PPMI + SVD  训练准确率={ppmi_scores[0]:.1%}  测试准确率={ppmi_scores[1]:.1%}")
     print(f"方法 7 Word2Vec    训练准确率={word2vec_scores[0]:.1%}  测试准确率={word2vec_scores[1]:.1%}")
     print(f"图表已保存: {OUTPUT_PATH}")
 
