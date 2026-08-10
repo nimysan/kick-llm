@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""第 5 个实验：Word2Vec 平均句向量 + 同一个逻辑回归。"""
+"""第 7 个实验：Word2Vec 平均句向量 + 同一个逻辑回归。"""
 
 from __future__ import annotations
 
@@ -93,10 +93,11 @@ def main() -> None:
     )
     train_features = vectorizer.fit_transform(train_texts)
     weights, bias = train_logistic_regression(train_features, train_labels)
+    print(accuracy)
     train_score = accuracy(train_features, train_labels, weights, bias)
 
     print("=" * 64)
-    print("实验 05：Word2Vec 平均句向量 + 逻辑回归")
+    print("实验 07：Word2Vec 平均句向量 + 逻辑回归")
     print("=" * 64)
     print(f"Word2Vec 无标签训练语料: {len(train_texts)} 句")
     print(f"Word2Vec 词表: {len(vectorizer.vocabulary)} 个词")

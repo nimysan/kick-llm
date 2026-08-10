@@ -1,4 +1,4 @@
-"""方法 5 使用的 Word2Vec 平均句向量特征提取器。"""
+"""方法 7 使用的 Word2Vec 平均句向量特征提取器。"""
 
 import numpy as np
 from gensim.models import Word2Vec
